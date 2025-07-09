@@ -1,16 +1,28 @@
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using TaskManagerAPI.Services;
+using TaskManagerAPI.Services.Interfaces;
+using TaskManagerAPI.Services.Implementations;
 
-var builder = FunctionsApplication.CreateBuilder(args);
+var host = new HostBuilder()
+    .ConfigureFunctionsWebApplication()
+    .ConfigureServices(services =>
+    {
+        services.AddApplicationInsightsTelemetryWorkerService();
+        services.ConfigureFunctionsApplicationInsights();
 
-builder.ConfigureFunctionsWebApplication();
+        var configuration = default(IConfiguration);
+        configuration = new ConfigurationBuilder()
+                    .AddEnvironmentVariables()
+                    .Build();
 
-builder.Services
-    .AddSingleton<TaskService>()
-    .AddApplicationInsightsTelemetryWorkerService()
-    .ConfigureFunctionsApplicationInsights();
+        services.AddHttpClient();
+        services.AddLogging();
 
-builder.Build().Run();
+        services.AddScoped<ITaskService,TaskService>();
+    })
+    .Build();
+
+host.Run();

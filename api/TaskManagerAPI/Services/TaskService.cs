@@ -4,16 +4,19 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TaskManagerAPI.Models;
+using TaskManagerAPI.Services.Interfaces;
 
-namespace TaskManagerAPI.Services
+namespace TaskManagerAPI.Services.Implementations
 {
-    public class TaskService
+    public class TaskService : ITaskService
     {
         private readonly string _connectionString;
+        private readonly HttpClient _httpClient;
 
-        public TaskService(IConfiguration config)
+        public TaskService(HttpClient client)
         {
-            _connectionString = config["SqlConnectionString"];
+            _connectionString = Environment.GetEnvironmentVariable("SqlConnectionString");
+            _httpClient = client;
         }
 
         public async Task<List<TaskItem>> GetTasksAsync()
