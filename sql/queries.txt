@@ -1,0 +1,12 @@
+//Query to create table
+
+CREATE TABLE Tasks (
+    Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    Title NVARCHAR(200) NOT NULL,
+    Description NVARCHAR(MAX),
+    DueDate DATETIME2,
+    Status NVARCHAR(50) NOT NULL DEFAULT 'pending',
+    CreatedBy NVARCHAR(256),
+    AssignedTo NVARCHAR(256),
+    CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
+);
