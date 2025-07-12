@@ -60,7 +60,7 @@ public class TaskFunction
     public async Task<HttpResponseData> CreateTask(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "tasks")] HttpRequestData req)
     {
-        var body = await JsonSerializer.DeserializeAsync<TaskItem>(req.Body, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        var body = await JsonSerializer.DeserializeAsync<CreateTaskDto>(req.Body, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         if (body is null)
             return req.CreateResponse(HttpStatusCode.BadRequest);
 

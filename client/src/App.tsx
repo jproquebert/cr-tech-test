@@ -1,19 +1,25 @@
 import "./App.css";
-import { LoginButton } from "./components/LoginButton";
+import { Sidebar } from "./components/Sidebar";
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { setUser } from "./store/userSlice";
 import { useMsal } from "@azure/msal-react";
 import { loginRequest } from "./authConfig";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTaskManagerEndpoints } from "./services/taskManagerEndpoints";
 import type { Task } from "./types/taskTypes";
+import { TaskCard } from "./components/TaskCard";
+import { AddTaskModal } from "./components/AddTaskModal";
+import { EditTaskModal } from "./components/EditTaskModal";
 
 function App() {
   const email = useSelector((state: any) => state.user.email);
   const dispatch = useDispatch();
   const { instance, accounts } = useMsal();
   const { getTasks } = useTaskManagerEndpoints();
+  const queryClient = useQueryClient();
+  const [showAddModal, setShowAddModal] = useState<boolean>(false);
+  const [editTask, setEditTask] = useState<Task | null>(null);
 
   useEffect(() => {
     if (accounts && accounts.length > 0) {
@@ -45,36 +51,56 @@ function App() {
     enabled: !!email, // Only fetch if logged in
   });
 
-  console.log("tasks ", tasks);
-
   return (
-    <div className="bg-black min-h-screen text-white">
-      <nav className="flex items-center justify-between px-8 py-4 bg-gray-900 shadow">
-        <div className="text-2xl font-bold tracking-tight">
-          Task Management app!
+    <div className="bg-black min-h-screen text-white flex flex-row relative">
+      {/* Sticky vertical sidebar */}
+      <Sidebar email={email} onAddTask={() => setShowAddModal(true)} />
+      {/* Main content area, scrollable */}
+      <main className="flex-1 overflow-y-auto flex flex-col items-center justify-center w-full px-2 sm:px-0">
+        <div className="w-full max-w-2xl rounded-xl shadow-xl bg-black p-4 sm:p-8">
+          {!email ? (
+            <div className="text-center text-lg text-blue-300 py-12">
+              Please log in to view your tasks.
+            </div>
+          ) : isLoading ? (
+            <div className="text-blue-300 animate-pulse">Loading tasks...</div>
+          ) : isError ? (
+            <div className="text-red-400">Failed to load tasks.</div>
+          ) : (
+            tasks && (
+              <ul className="w-full animate-fade-in">
+                {tasks.map((task: Task) => (
+                  <li key={task.Id} className="w-full">
+                    <TaskCard task={task} onEdit={setEditTask} />
+                  </li>
+                ))}
+              </ul>
+            )
+          )}
         </div>
-        <div>
-          <LoginButton />
-        </div>
-      </nav>
-      <main className="flex flex-col items-center justify-center mt-12 w-full">
-        <h2 className="text-xl mb-4">Tasks</h2>
-        {isLoading && <div>Loading tasks...</div>}
-        {isError && <div>Failed to load tasks.</div>}
-        {tasks && (
-          <ul className="w-full max-w-2xl">
-            {tasks.map((task: Task) => (
-              <li
-                key={task.Id}
-                className="bg-gray-800 rounded p-4 mb-2 shadow flex flex-col"
-              >
-                <p>{task.Title}</p>
-                {/* Optionally show more task info here */}
-              </li>
-            ))}
-          </ul>
-        )}
       </main>
+      {showAddModal && (
+        <AddTaskModal
+          open={showAddModal}
+          onClose={() => setShowAddModal(false)}
+          onTaskCreated={() => {
+            setShowAddModal(false);
+            queryClient.invalidateQueries({ queryKey: ["tasks"] });
+          }}
+        />
+      )}
+      {editTask && (
+        <EditTaskModal
+          open={!!editTask}
+          id={editTask.Id}
+          task={editTask}
+          onClose={() => setEditTask(null)}
+          onTaskUpdated={() => {
+            setEditTask(null);
+            queryClient.invalidateQueries({ queryKey: ["tasks"] });
+          }}
+        />
+      )}
     </div>
   );
 }

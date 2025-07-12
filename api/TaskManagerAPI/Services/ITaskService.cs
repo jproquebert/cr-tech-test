@@ -11,7 +11,7 @@ namespace TaskManagerAPI.Services.Interfaces
     {
         Task<List<TaskItem>> GetTasksAsync();
         Task<TaskItem?> GetTaskByIdAsync(Guid id);
-        Task<TaskItem> CreateTaskAsync(TaskItem task);
+        Task<TaskItem> CreateTaskAsync(CreateTaskDto task);
         Task<TaskItem?> UpdateTaskAsync(TaskItem task);
         Task<bool> DeleteTaskAsync(Guid id);
     }

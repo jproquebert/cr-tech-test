@@ -73,13 +73,12 @@ namespace TaskManagerAPI.Services.Implementations
             return null;
         }
 
-        public async Task<TaskItem> CreateTaskAsync(TaskItem task)
+        public async Task<TaskItem> CreateTaskAsync(CreateTaskDto task)
         {
             using var conn = new SqlConnection(_connectionString);
             await conn.OpenAsync();
 
             var newId = Guid.NewGuid();
-            task.Id = newId; // assign generated Id to the task object
 
             var cmd = new SqlCommand(@"
         INSERT INTO Tasks (Id, Title, Description, DueDate, Status, CreatedBy, AssignedTo, CreatedAt)
@@ -92,11 +91,30 @@ namespace TaskManagerAPI.Services.Implementations
             cmd.Parameters.AddWithValue("@Status", task.Status);
             cmd.Parameters.AddWithValue("@CreatedBy", task.CreatedBy);
             cmd.Parameters.AddWithValue("@AssignedTo", task.AssignedTo);
-            cmd.Parameters.AddWithValue("@CreatedAt", task.CreatedAt);
+            cmd.Parameters.AddWithValue("@CreatedAt", DateTime.UtcNow);
 
             await cmd.ExecuteNonQueryAsync();
 
-            return task;
+            // Fetch and return the created object
+            var getCmd = new SqlCommand("SELECT * FROM Tasks WHERE Id = @Id", conn);
+            getCmd.Parameters.AddWithValue("@Id", newId);
+            var reader = await getCmd.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                return new TaskItem
+                {
+                    Id = reader.GetGuid(0),
+                    Title = reader.GetString(1),
+                    Description = reader.IsDBNull(2) ? null : reader.GetString(2),
+                    DueDate = reader.IsDBNull(3) ? null : reader.GetDateTime(3),
+                    Status = reader.GetString(4),
+                    CreatedBy = reader.GetString(5),
+                    AssignedTo = reader.GetString(6),
+                    CreatedAt = reader.GetDateTime(7)
+                };
+            }
+
+            throw new Exception("Failed to fetch created task.");
         }
 
 

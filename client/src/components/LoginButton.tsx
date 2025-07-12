@@ -21,10 +21,23 @@ export function LoginButton() {
     );
   };
 
+  const logout = () => {
+    instance.logoutPopup();
+    dispatch(setUser({ email: "", name: "", token: "" }));
+  };
+
   if (email) {
     return (
-      <span className="text-gray-200">
-        Logged in as: <strong>{email}</strong>
+      <span className="flex flex-wrap items-center gap-2 text-gray-200 w-full">
+        <span className="break-all max-w-[10rem]">{/* limit width for long emails */}
+          Logged in as: <strong>{email}</strong>
+        </span>
+        <button
+          onClick={logout}
+          className="px-3 py-1 rounded bg-red-600 hover:bg-red-700 text-white font-semibold shadow text-xs"
+        >
+          Log out
+        </button>
       </span>
     );
   }
