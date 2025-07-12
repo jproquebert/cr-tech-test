@@ -20,6 +20,7 @@ function App() {
   const queryClient = useQueryClient();
   const [showAddModal, setShowAddModal] = useState<boolean>(false);
   const [editTask, setEditTask] = useState<Task | null>(null);
+  const [statusFilter, setStatusFilter] = useState<string[] | null>(null);
 
   useEffect(() => {
     if (accounts && accounts.length > 0) {
@@ -46,15 +47,19 @@ function App() {
     isLoading,
     isError,
   } = useQuery<Task[], Error>({
-    queryKey: ["tasks"],
-    queryFn: getTasks,
-    enabled: !!email, // Only fetch if logged in
+    queryKey: ["tasks", statusFilter],
+    queryFn: () => getTasks(statusFilter),
+    enabled: !!email,
   });
 
   return (
     <div className="bg-black min-h-screen text-white flex flex-row relative">
       {/* Sticky vertical sidebar */}
-      <Sidebar email={email} onAddTask={() => setShowAddModal(true)} />
+      <Sidebar
+        email={email}
+        onAddTask={() => setShowAddModal(true)}
+        onStatusFilterChange={setStatusFilter}
+      />
       {/* Main content area, scrollable */}
       <main className="flex-1 overflow-y-auto flex flex-col items-center justify-center w-full px-2 sm:px-0">
         <div className="w-full max-w-2xl rounded-xl shadow-xl bg-black p-4 sm:p-8">
@@ -67,15 +72,13 @@ function App() {
           ) : isError ? (
             <div className="text-red-400">Failed to load tasks.</div>
           ) : (
-            tasks && (
-              <ul className="w-full animate-fade-in">
-                {tasks.map((task: Task) => (
-                  <li key={task.Id} className="w-full">
-                    <TaskCard task={task} onEdit={setEditTask} />
-                  </li>
-                ))}
-              </ul>
-            )
+            <ul className="w-full animate-fade-in">
+              {tasks?.map((task: Task) => (
+                <li key={task.Id} className="w-full">
+                  <TaskCard task={task} onEdit={setEditTask} />
+                </li>
+              ))}
+            </ul>
           )}
         </div>
       </main>

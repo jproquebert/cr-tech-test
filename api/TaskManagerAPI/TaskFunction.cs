@@ -26,11 +26,18 @@ public class TaskFunction
 
     [Function("GetTasks")]
     [OpenApiOperation("GetTasks", tags: new[] { "Task" })]
+    [OpenApiParameter("status", In = ParameterLocation.Query, Required = false, Type = typeof(string), Description = "Comma-separated list of statuses to filter")]
     [OpenApiResponseWithBody(HttpStatusCode.OK, "application/json", typeof(List<TaskItem>), Description = "List of all tasks")]
     public async Task<HttpResponseData> GetTasks(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "tasks")] HttpRequestData req)
     {
-        var tasks = await _taskService.GetTasksAsync();
+        var query = System.Web.HttpUtility.ParseQueryString(req.Url.Query);
+        var statusParam = query.Get("status");
+        List<string>? statuses = null;
+        if (!string.IsNullOrWhiteSpace(statusParam))
+            statuses = statusParam.Split(',').Select(s => s.Trim().ToLower()).ToList();
+
+        var tasks = await _taskService.GetTasksAsync(statuses);
         var response = req.CreateResponse(HttpStatusCode.OK);
         await response.WriteAsJsonAsync(tasks);
         return response;

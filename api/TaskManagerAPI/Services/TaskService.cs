@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TaskManagerAPI.Models;
 using TaskManagerAPI.Services.Interfaces;
@@ -19,15 +20,29 @@ namespace TaskManagerAPI.Services.Implementations
             _httpClient = client;
         }
 
-        public async Task<List<TaskItem>> GetTasksAsync()
+        public async Task<List<TaskItem>> GetTasksAsync(List<string>? statuses = null)
         {
             var tasks = new List<TaskItem>();
-
             using var conn = new SqlConnection(_connectionString);
             await conn.OpenAsync();
-            var cmd = new SqlCommand("SELECT * FROM Tasks", conn);
-            var reader = await cmd.ExecuteReaderAsync();
 
+            string sql = "SELECT * FROM Tasks";
+            if (statuses != null && statuses.Count > 0)
+            {
+                sql += " WHERE " + string.Join(" OR ", statuses.Select((s, i) => $"LOWER(Status) = @Status{i}"));
+            }
+            sql += " ORDER BY CreatedAt DESC";
+
+            var cmd = new SqlCommand(sql, conn);
+            if (statuses != null && statuses.Count > 0)
+            {
+                for (int i = 0; i < statuses.Count; i++)
+                {
+                    cmd.Parameters.AddWithValue($"@Status{i}", statuses[i]);
+                }
+            }
+
+            var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
                 tasks.Add(new TaskItem
@@ -42,7 +57,6 @@ namespace TaskManagerAPI.Services.Implementations
                     CreatedAt = reader.GetDateTime(7)
                 });
             }
-
             return tasks;
         }
 
