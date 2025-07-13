@@ -10,27 +10,31 @@ export function LoginButton() {
   const email = useSelector((state: any) => state.user.email);
 
   const login = async () => {
-    const result = await instance.loginPopup(loginRequest);
+    const result = await instance.loginPopup({ ...loginRequest, prompt: "select_account" });
     const { accessToken, account } = result;
-    dispatch(
-      setUser({
-        email: account.username,
-        name: account.name,
-        token: accessToken,
-      })
-    );
+    const user = {
+      email: account.username,
+      name: account.name,
+      token: accessToken,
+    };
+    localStorage.setItem("user", JSON.stringify(user)); // Save to localStorage
+    dispatch(setUser(user));
   };
 
   const logout = () => {
     instance.logoutPopup();
+    localStorage.removeItem("user"); // Remove from localStorage
     dispatch(setUser({ email: "", name: "", token: "" }));
   };
 
   if (email) {
     return (
-      <span className="flex flex-wrap items-center gap-2 text-gray-200 w-full">
-        <span className="break-all max-w-[10rem]">{/* limit width for long emails */}
-          Logged in as: <strong>{email}</strong>
+      <span className="flex items-center gap-2 text-gray-200 w-full">
+        <span
+          className="truncate max-w-[140px] px-2 py-1 rounded bg-gray-800"
+          title={email}
+        >
+          <strong>{email}</strong>
         </span>
         <button
           onClick={logout}

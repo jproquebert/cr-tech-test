@@ -12,5 +12,6 @@ export const msalConfig = {
 };
 
 export const loginRequest = {
-  scopes: ["openid", "profile", "email"],
+  scopes: ["api://dc4461c9-e917-4c33-b840-c4f859722768/user_impersonation"],
+  prompt: "select_account",
 };

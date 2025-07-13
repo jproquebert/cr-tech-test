@@ -23,6 +23,13 @@ function App() {
   const [statusFilter, setStatusFilter] = useState<string[] | null>(null);
 
   useEffect(() => {
+    // Restore user from localStorage on first load
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      dispatch(setUser(user));
+    }
+
     if (accounts && accounts.length > 0) {
       const account = accounts[0];
       instance
@@ -68,7 +75,11 @@ function App() {
               Please log in to view your tasks.
             </div>
           ) : isLoading ? (
-            <div className="text-blue-300 animate-pulse">Loading tasks...</div>
+            <div className="flex justify-center items-center w-full h-40">
+              <span className="text-blue-300 animate-pulse text-lg">
+                Loading tasks...
+              </span>
+            </div>
           ) : isError ? (
             <div className="text-red-400">Failed to load tasks.</div>
           ) : (
