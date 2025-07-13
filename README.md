@@ -116,15 +116,18 @@ Install dependencies:
 npm install
 ```
 
-Configure authentication by updating `src/authConfig.ts`:
-```typescript
-export const msalConfig = {
-  auth: {
-    clientId: "YOUR_AZURE_CLIENT_ID",
-    authority: "https://login.microsoftonline.com/YOUR_TENANT_ID",
-    redirectUri: "http://localhost:5173"
-  }
-};
+Configure environment variables:
+```bash
+# Copy the environment template
+cp .env.example .env.local
+```
+
+Edit `.env.local` with your Azure AD values:
+```env
+VITE_AZURE_CLIENT_ID=your_azure_client_id_here
+VITE_AZURE_AUTHORITY=https://login.microsoftonline.com/common
+VITE_AZURE_REDIRECT_URI=http://localhost:5173
+VITE_AZURE_SCOPES=api://your_azure_client_id_here/user_impersonation
 ```
 
 Start the development server:

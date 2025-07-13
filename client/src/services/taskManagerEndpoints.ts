@@ -69,7 +69,13 @@ export function useTaskManagerEndpoints() {
       },
     });
     if (!res.ok) throw new Error("Failed to delete task");
-    return res.json();
+    
+    // Only try to parse JSON if there's content
+    const contentType = res.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      return res.json();
+    }
+    return { success: true }; // Default success response
   };
 
   return { getTasks, createTask, editTask, deleteTask };
