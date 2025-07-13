@@ -1,9 +1,10 @@
 import type { Task } from "../types/taskTypes";
-import { HiPencil } from "react-icons/hi";
+import { HiPencil, HiTrash } from "react-icons/hi";
 
 interface TaskCardProps {
   task: Task;
   onEdit?: (task: Task) => void;
+  onDelete?: (task: Task) => void;
 }
 
 function getStatusColor(status: string) {
@@ -19,7 +20,7 @@ function getStatusColor(status: string) {
   }
 }
 
-export function TaskCard({ task, onEdit }: TaskCardProps) {
+export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
   const statusColor = getStatusColor(task.Status);
 
   return (
@@ -45,6 +46,13 @@ export function TaskCard({ task, onEdit }: TaskCardProps) {
             onClick={() => onEdit && onEdit(task)}
           >
             <HiPencil className="text-lg" />
+          </button>
+          <button
+            className="ml-2 p-2 rounded-full bg-gray-800 hover:bg-red-600 text-red-300 hover:text-white transition cursor-pointer"
+            title="Delete Task"
+            onClick={() => onDelete && onDelete(task)}
+          >
+            <HiTrash className="text-lg" />
           </button>
         </div>
       </div>

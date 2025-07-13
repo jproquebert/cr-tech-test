@@ -11,16 +11,20 @@ import type { Task } from "./types/taskTypes";
 import { TaskCard } from "./components/TaskCard";
 import { AddTaskModal } from "./components/AddTaskModal";
 import { EditTaskModal } from "./components/EditTaskModal";
+import { DeleteTaskModal } from "./components/DeleteTaskModal";
 
 function App() {
   const email = useSelector((state: any) => state.user.email);
   const dispatch = useDispatch();
   const { instance, accounts } = useMsal();
-  const { getTasks } = useTaskManagerEndpoints();
+  const { getTasks, deleteTask: deleteTaskEndpoint } = useTaskManagerEndpoints();
   const queryClient = useQueryClient();
   const [showAddModal, setShowAddModal] = useState<boolean>(false);
   const [editTask, setEditTask] = useState<Task | null>(null);
+  const [deleteTask, setDeleteTask] = useState<Task | null>(null);
   const [statusFilter, setStatusFilter] = useState<string[] | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   useEffect(() => {
     // Restore user from localStorage on first load
@@ -59,6 +63,21 @@ function App() {
     enabled: !!email,
   });
 
+  const handleDeleteTask = async () => {
+    if (!deleteTask) return;
+    setDeleteLoading(true);
+    setDeleteError(null);
+    try {
+      await deleteTaskEndpoint(deleteTask.Id);
+      setDeleteTask(null);
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    } catch (err) {
+      setDeleteError("Failed to delete task.");
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+
   return (
     <div className="bg-black min-h-screen text-white flex flex-row relative">
       {/* Sticky vertical sidebar */}
@@ -86,7 +105,11 @@ function App() {
             <ul className="w-full animate-fade-in">
               {tasks?.map((task: Task) => (
                 <li key={task.Id} className="w-full">
-                  <TaskCard task={task} onEdit={setEditTask} />
+                  <TaskCard
+                    task={task}
+                    onEdit={setEditTask}
+                    onDelete={setDeleteTask}
+                  />
                 </li>
               ))}
             </ul>
@@ -115,6 +138,14 @@ function App() {
           }}
         />
       )}
+      <DeleteTaskModal
+        open={!!deleteTask}
+        taskTitle={deleteTask?.Title || ""}
+        onDelete={handleDeleteTask}
+        onClose={() => setDeleteTask(null)}
+        loading={deleteLoading}
+        error={deleteError}
+      />
     </div>
   );
 }

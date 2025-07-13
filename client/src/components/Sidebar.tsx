@@ -49,14 +49,14 @@ export function Sidebar({
       {email && (
         <>
           <button
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white font-bold shadow transition mb-4 w-full justify-center"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white font-bold shadow transition mb-6 w-full justify-center"
             onClick={onAddTask}
           >
             <HiPlus className="text-xl" />
             Add Task
           </button>
           {/* Status Filter Bubbles */}
-          <div className="w-full flex flex-col items-center mb-4">
+          <div className="w-full flex flex-col items-center mb-4 mt-4">
             <span className="text-sm text-blue-300 font-semibold mb-2 text-center">
               Select one or more bubbles below to filter tasks by status:
             </span>

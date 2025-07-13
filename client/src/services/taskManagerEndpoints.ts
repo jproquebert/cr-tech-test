@@ -53,5 +53,17 @@ export function useTaskManagerEndpoints() {
     return res.json();
   };
 
-  return { getTasks, createTask, editTask };
+  const deleteTask = async (id: string) => {
+    const res = await fetch(`http://localhost:7011/api/tasks/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!res.ok) throw new Error("Failed to delete task");
+    return res.json();
+  };
+
+  return { getTasks, createTask, editTask, deleteTask };
 }
