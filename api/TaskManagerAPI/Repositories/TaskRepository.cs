@@ -181,5 +181,38 @@ namespace TaskManagerAPI.Repositories
             int rowsAffected = await cmd.ExecuteNonQueryAsync();
             return rowsAffected > 0;
         }
+
+        public async Task<List<TaskItem>> SearchTasksAsync(string? searchText)
+        {
+            var tasks = new List<TaskItem>();
+            using var conn = new SqlConnection(_connectionString);
+            await conn.OpenAsync();
+
+            var sql = "SELECT Id, Title, Description, DueDate, Status, CreatedBy, AssignedTo, CreatedAt FROM Tasks WHERE 1=1";
+            if (!string.IsNullOrWhiteSpace(searchText))
+                sql += " AND (Title LIKE @SearchText OR AssignedTo LIKE @SearchText)";
+            sql += " ORDER BY CreatedAt DESC";
+
+            using var cmd = new SqlCommand(sql, conn);
+            if (!string.IsNullOrWhiteSpace(searchText))
+                cmd.Parameters.AddWithValue("@SearchText", $"%{searchText}%");
+
+            using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                tasks.Add(new TaskItem
+                {
+                    Id = reader.GetGuid(0),
+                    Title = reader.GetString(1),
+                    Description = reader.IsDBNull(2) ? null : reader.GetString(2),
+                    DueDate = reader.IsDBNull(3) ? null : reader.GetDateTime(3),
+                    Status = reader.GetString(4),
+                    CreatedBy = reader.GetString(5),
+                    AssignedTo = reader.GetString(6),
+                    CreatedAt = reader.GetDateTime(7)
+                });
+            }
+            return tasks;
+        }
     }
 }

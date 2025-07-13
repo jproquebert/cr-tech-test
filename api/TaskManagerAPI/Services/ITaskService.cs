@@ -14,5 +14,6 @@ namespace TaskManagerAPI.Services.Interfaces
         Task<TaskItem> CreateTaskAsync(CreateTaskDto task);
         Task<TaskItem?> UpdateTaskAsync(TaskItem task);
         Task<bool> DeleteTaskAsync(Guid id);
+        Task<List<TaskItem>> SearchTasksAsync(string? searchText);
     }
 }

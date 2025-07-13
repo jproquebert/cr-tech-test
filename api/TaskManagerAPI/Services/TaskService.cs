@@ -27,5 +27,8 @@ namespace TaskManagerAPI.Services.Implementations
 
         public Task<bool> DeleteTaskAsync(Guid id)
             => _repository.DeleteTaskAsync(id);
+
+        public Task<List<TaskItem>> SearchTasksAsync(string? searchText)
+            => _repository.SearchTasksAsync(searchText);
     }
 }
