@@ -189,13 +189,6 @@ public class TaskFunction
 
     private bool ValidateToken(string token)
     {
-        // Temporarily disable validation for debugging
-        _logger.LogInformation($"Token received: '{token}'");
-        _logger.LogInformation($"Token length: {token.Length}");
-        _logger.LogInformation($"Token segments: {token.Split('.').Length}");
-        return true; // Temporarily return true to bypass validation
-        
-        /*
         var tenantId = Environment.GetEnvironmentVariable("TenantId");
         var clientId = Environment.GetEnvironmentVariable("ClientId");
         var issuer = $"https://login.microsoftonline.com/{tenantId}/v2.0";
@@ -225,7 +218,6 @@ public class TaskFunction
             _logger.LogError($"Token validation failed: {ex.Message}");
             return false;
         }
-        */
     }
 
     // Helper to fetch signing keys from Azure AD

@@ -1,0 +1,15 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
+    "SqlConnectionString": "Server=tcp:taskdbserver.database.windows.net,1433;Initial Catalog=taskmanagementdb;Persist Security Info=False;User ID=jproqueb@gmail.com@taskdbserver;Password=Jp081674!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;",
+    "TenantId": "9188040d-6c67-4c5b-b112-36a304b66dad",
+    "ClientId": "dc4461c9-e917-4c33-b840-c4f859722768"
+  },
+  "Host": {
+    "CORS": "*",
+    "CORSCredentials": false
+  }
+}
+
