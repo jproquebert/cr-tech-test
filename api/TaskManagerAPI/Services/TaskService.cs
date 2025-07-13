@@ -6,9 +6,9 @@ namespace TaskManagerAPI.Services.Implementations
 {
     public class TaskService : ITaskService
     {
-        private readonly TaskRepository _repository;
+        private readonly ITaskRepository _repository;
 
-        public TaskService(TaskRepository repository)
+        public TaskService(ITaskRepository repository)
         {
             _repository = repository;
         }

@@ -3,7 +3,7 @@ using TaskManagerAPI.Models;
 
 namespace TaskManagerAPI.Repositories
 {
-    public class TaskRepository
+    public class TaskRepository : ITaskRepository
     {
         private readonly string _connectionString;
 

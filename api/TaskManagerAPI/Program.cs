@@ -22,11 +22,11 @@ var host = new HostBuilder()
         services.AddHttpClient();
         services.AddLogging();
 
-        services.AddScoped<TaskRepository>(provider =>
+        services.AddScoped<ITaskRepository>(provider =>
         {
             var config = provider.GetRequiredService<IConfiguration>();
             var connectionString = config["SqlConnectionString"] ?? Environment.GetEnvironmentVariable("SqlConnectionString");
-            return RepositoryFactory.CreateTaskRepository(connectionString);
+            return new TaskRepository(connectionString);
         });
         services.AddScoped<ITaskService, TaskService>();
     })
