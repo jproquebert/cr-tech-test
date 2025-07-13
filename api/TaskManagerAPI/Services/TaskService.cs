@@ -13,8 +13,8 @@ namespace TaskManagerAPI.Services.Implementations
             _repository = repository;
         }
 
-        public Task<List<TaskItem>> GetTasksAsync(List<string>? statuses = null)
-            => _repository.GetTasksAsync(statuses);
+        public Task<List<TaskItem>> GetTasksAsync(List<string>? statuses = null, string? searchText = null)
+            => _repository.GetTasksAsync(statuses, searchText);
 
         public Task<TaskItem?> GetTaskByIdAsync(Guid id)
             => _repository.GetTaskByIdAsync(id);
@@ -27,8 +27,5 @@ namespace TaskManagerAPI.Services.Implementations
 
         public Task<bool> DeleteTaskAsync(Guid id)
             => _repository.DeleteTaskAsync(id);
-
-        public Task<List<TaskItem>> SearchTasksAsync(string? searchText)
-            => _repository.SearchTasksAsync(searchText);
     }
 }

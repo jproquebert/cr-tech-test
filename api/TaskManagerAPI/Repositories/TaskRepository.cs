@@ -12,27 +12,31 @@ namespace TaskManagerAPI.Repositories
             _connectionString = connectionString;
         }
 
-        public async Task<List<TaskItem>> GetTasksAsync(List<string>? statuses = null)
+        public async Task<List<TaskItem>> GetTasksAsync(List<string>? statuses = null, string? searchText = null)
         {
             var tasks = new List<TaskItem>();
             using var conn = new SqlConnection(_connectionString);
             await conn.OpenAsync();
 
-            string sql = "SELECT * FROM Tasks";
-            if (statuses != null && statuses.Count > 0)
-            {
-                sql += " WHERE " + string.Join(" OR ", statuses.Select((s, i) => $"LOWER(Status) = @Status{i}"));
-            }
-            sql += " ORDER BY CreatedAt DESC";
+            var sql = "SELECT * FROM Tasks WHERE 1=1";
+            var cmd = new SqlCommand();
+            cmd.Connection = conn;
 
-            var cmd = new SqlCommand(sql, conn);
             if (statuses != null && statuses.Count > 0)
             {
+                sql += " AND (" + string.Join(" OR ", statuses.Select((s, i) => $"LOWER(Status) = @Status{i}")) + ")";
                 for (int i = 0; i < statuses.Count; i++)
                 {
-                    cmd.Parameters.AddWithValue($"@Status{i}", statuses[i]);
+                    cmd.Parameters.AddWithValue($"@Status{i}", statuses[i].ToLower());
                 }
             }
+            if (!string.IsNullOrWhiteSpace(searchText))
+            {
+                sql += " AND (Title LIKE @SearchText OR AssignedTo LIKE @SearchText)";
+                cmd.Parameters.AddWithValue("@SearchText", $"%{searchText}%");
+            }
+            sql += " ORDER BY CreatedAt DESC";
+            cmd.CommandText = sql;
 
             var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
@@ -180,39 +184,6 @@ namespace TaskManagerAPI.Repositories
 
             int rowsAffected = await cmd.ExecuteNonQueryAsync();
             return rowsAffected > 0;
-        }
-
-        public async Task<List<TaskItem>> SearchTasksAsync(string? searchText)
-        {
-            var tasks = new List<TaskItem>();
-            using var conn = new SqlConnection(_connectionString);
-            await conn.OpenAsync();
-
-            var sql = "SELECT Id, Title, Description, DueDate, Status, CreatedBy, AssignedTo, CreatedAt FROM Tasks WHERE 1=1";
-            if (!string.IsNullOrWhiteSpace(searchText))
-                sql += " AND (Title LIKE @SearchText OR AssignedTo LIKE @SearchText)";
-            sql += " ORDER BY CreatedAt DESC";
-
-            using var cmd = new SqlCommand(sql, conn);
-            if (!string.IsNullOrWhiteSpace(searchText))
-                cmd.Parameters.AddWithValue("@SearchText", $"%{searchText}%");
-
-            using var reader = await cmd.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
-            {
-                tasks.Add(new TaskItem
-                {
-                    Id = reader.GetGuid(0),
-                    Title = reader.GetString(1),
-                    Description = reader.IsDBNull(2) ? null : reader.GetString(2),
-                    DueDate = reader.IsDBNull(3) ? null : reader.GetDateTime(3),
-                    Status = reader.GetString(4),
-                    CreatedBy = reader.GetString(5),
-                    AssignedTo = reader.GetString(6),
-                    CreatedAt = reader.GetDateTime(7)
-                });
-            }
-            return tasks;
         }
     }
 }

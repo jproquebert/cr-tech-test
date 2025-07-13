@@ -33,6 +33,7 @@ public class TaskFunction
     [Function("GetTasks")]
     [OpenApiOperation("GetTasks", tags: new[] { "Task" })]
     [OpenApiParameter("status", In = ParameterLocation.Query, Required = false, Type = typeof(string), Description = "Comma-separated list of statuses to filter")]
+    [OpenApiParameter("searchText", In = ParameterLocation.Query, Required = false, Type = typeof(string), Description = "Search by task title or assigned user")]
     [OpenApiResponseWithBody(HttpStatusCode.OK, "application/json", typeof(List<TaskItem>), Description = "List of all tasks")]
     public async Task<HttpResponseData> GetTasks(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "tasks")] HttpRequestData req)
@@ -48,11 +49,12 @@ public class TaskFunction
 
         var query = System.Web.HttpUtility.ParseQueryString(req.Url.Query);
         var statusParam = query.Get("status");
+        var searchText = query.Get("searchText");
         List<string>? statuses = null;
         if (!string.IsNullOrWhiteSpace(statusParam))
             statuses = statusParam.Split(',').Select(s => s.Trim().ToLower()).ToList();
 
-        var tasks = await _taskService.GetTasksAsync(statuses);
+        var tasks = await _taskService.GetTasksAsync(statuses, searchText);
         var response = req.CreateResponse(HttpStatusCode.OK);
         await response.WriteAsJsonAsync(tasks);
         return response;
@@ -179,31 +181,6 @@ public class TaskFunction
         var response = req.CreateResponse(HttpStatusCode.OK);
         await response.WriteAsJsonAsync(result);
 
-        return response;
-    }
-
-    [Function("SearchTasks")]
-    [OpenApiOperation("SearchTasks", tags: new[] { "Task" })]
-    [OpenApiParameter("searchText", In = ParameterLocation.Query, Required = false, Type = typeof(string), Description = "Search by task title or assigned user")]
-    [OpenApiResponseWithBody(HttpStatusCode.OK, "application/json", typeof(List<TaskItem>), Description = "Search results")]
-    public async Task<HttpResponseData> SearchTasks(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "tasks/search")] HttpRequestData req)
-    {
-        // Validate Bearer token
-        var authHeader = req.Headers.TryGetValues("Authorization", out var values) ? values.FirstOrDefault() : null;
-        if (authHeader == null || !authHeader.StartsWith("Bearer "))
-            return req.CreateResponse(HttpStatusCode.Unauthorized);
-
-        var token = authHeader.Substring("Bearer ".Length);
-        if (!ValidateToken(token))
-            return req.CreateResponse(HttpStatusCode.Unauthorized);
-
-        var query = System.Web.HttpUtility.ParseQueryString(req.Url.Query);
-        var searchText = query.Get("searchText");
-
-        var results = await _taskService.SearchTasksAsync(searchText);
-        var response = req.CreateResponse(HttpStatusCode.OK);
-        await response.WriteAsJsonAsync(results);
         return response;
     }
 

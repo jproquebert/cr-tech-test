@@ -4,10 +4,17 @@ import type { CreateTaskDto, EditTaskDto } from "../types/taskTypes";
 export function useTaskManagerEndpoints() {
   const token = useSelector((state: any) => state.user.token);
 
-  const getTasks = async (statuses?: string[] | null) => {
+  const getTasks = async (statuses?: string[] | null, searchText?: string | null) => {
     let url = "http://localhost:7011/api/tasks";
+    const params: string[] = [];
     if (statuses && statuses.length > 0) {
-      url += "?status=" + encodeURIComponent(statuses.join(","));
+      params.push("status=" + encodeURIComponent(statuses.join(",")));
+    }
+    if (searchText && searchText.length > 0) {
+      params.push("searchText=" + encodeURIComponent(searchText));
+    }
+    if (params.length > 0) {
+      url += "?" + params.join("&");
     }
     const res = await fetch(url, {
       method: "GET",
