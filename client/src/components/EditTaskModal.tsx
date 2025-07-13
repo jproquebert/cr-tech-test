@@ -61,7 +61,7 @@ export function EditTaskModal({ open, id, task, onClose, onTaskUpdated }: EditTa
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-2">
       <div className="bg-gray-900 rounded-xl shadow-2xl p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
         <h2 className="text-xl font-bold mb-4 text-blue-400">Edit Task</h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">

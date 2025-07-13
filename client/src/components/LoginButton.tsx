@@ -29,20 +29,20 @@ export function LoginButton() {
 
   if (email) {
     return (
-      <span className="flex items-center gap-2 text-gray-200 w-full">
+      <div className="flex flex-col items-start gap-2 w-full">
         <span
-          className="truncate max-w-[140px] px-2 py-1 rounded bg-gray-800"
+          className="truncate w-full px-2 py-1 rounded bg-gray-800 text-gray-200"
           title={email}
         >
           <strong>{email}</strong>
         </span>
         <button
           onClick={logout}
-          className="px-3 py-1 rounded bg-red-600 hover:bg-red-700 text-white font-semibold shadow text-xs"
+          className="px-3 py-1 rounded bg-red-600 hover:bg-red-700 text-white font-semibold shadow text-xs mt-1"
         >
           Log out
         </button>
-      </span>
+      </div>
     );
   }
 

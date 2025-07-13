@@ -12,6 +12,7 @@ import { TaskCard } from "./components/TaskCard";
 import { AddTaskModal } from "./components/AddTaskModal";
 import { EditTaskModal } from "./components/EditTaskModal";
 import { DeleteTaskModal } from "./components/DeleteTaskModal";
+import { HiMenu } from "react-icons/hi";
 
 function App() {
   const email = useSelector((state: any) => state.user.email);
@@ -25,15 +26,18 @@ function App() {
   const [statusFilter, setStatusFilter] = useState<string[] | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
+  const [userLoaded, setUserLoaded] = useState(false);
 
   useEffect(() => {
-    // Restore user from localStorage on first load
+    // Restore user from localStorage
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       const user = JSON.parse(storedUser);
       dispatch(setUser(user));
     }
 
+    // Try to acquire token if MSAL account exists
     if (accounts && accounts.length > 0) {
       const account = accounts[0];
       instance
@@ -46,10 +50,13 @@ function App() {
               token: result.accessToken,
             })
           );
+          setUserLoaded(true); // Set loaded after token is set
         })
         .catch(() => {
-          // Token might be expired or missing, do nothing
+          setUserLoaded(true); // Even if token fails, allow UI to show
         });
+    } else {
+      setUserLoaded(true); // No accounts, allow UI to show
     }
   }, [dispatch, instance, accounts]);
 
@@ -60,7 +67,7 @@ function App() {
   } = useQuery<Task[], Error>({
     queryKey: ["tasks", statusFilter],
     queryFn: () => getTasks(statusFilter),
-    enabled: !!email,
+    enabled: !!email && userLoaded, // Only fetch after user is loaded and email is present
   });
 
   const handleDeleteTask = async () => {
@@ -80,14 +87,34 @@ function App() {
 
   return (
     <div className="bg-black min-h-screen text-white flex flex-row relative">
-      {/* Sticky vertical sidebar */}
+      {/* Burger menu for mobile */}
+      <button
+        className="fixed top-4 left-4 z-50 sm:hidden bg-gray-900 p-2 rounded-full shadow-lg"
+        onClick={() => setSidebarOpen(true)}
+        aria-label="Open sidebar"
+      >
+        <HiMenu className="text-2xl text-blue-400" />
+      </button>
+
+      {/* Sidebar */}
       <Sidebar
         email={email}
         onAddTask={() => setShowAddModal(true)}
         onStatusFilterChange={setStatusFilter}
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
       />
-      {/* Main content area, scrollable */}
-      <main className="flex-1 overflow-y-auto flex flex-col items-center justify-center w-full px-2 sm:px-0">
+
+      {/* Overlay when sidebar is open on mobile */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 z-40 sm:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Main content area */}
+      <main className={`flex-1 overflow-y-auto flex flex-col items-center justify-center w-full px-2 sm:px-0 transition-all duration-300 ${sidebarOpen ? "blur-sm pointer-events-none sm:blur-0 sm:pointer-events-auto" : ""}`}>
         <div className="w-full max-w-2xl rounded-xl shadow-xl bg-black p-4 sm:p-8">
           {!email ? (
             <div className="text-center text-lg text-blue-300 py-12">

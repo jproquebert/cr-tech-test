@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { LoginButton } from "./LoginButton";
-import { HiPlus } from "react-icons/hi";
+import { HiPlus, HiX } from "react-icons/hi";
 import { StatusFilterBubbles } from "./StatusFilterBubbles";
 
 interface SidebarProps {
   email: string;
   onAddTask: () => void;
   onStatusFilterChange?: (status: string[] | null) => void;
+  open?: boolean;
+  onClose?: () => void;
 }
 
 const statusOptions = [
@@ -19,6 +21,8 @@ export function Sidebar({
   email,
   onAddTask,
   onStatusFilterChange,
+  open = false,
+  onClose,
 }: SidebarProps) {
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
 
@@ -35,7 +39,24 @@ export function Sidebar({
   };
 
   return (
-    <aside className="w-64 h-screen bg-gray-900 border-r border-blue-700 shadow-2xl flex flex-col items-center py-8 px-4 sticky top-0 left-0 rounded-r-2xl">
+    <aside
+      className={`z-50 fixed top-0 left-0 h-screen w-64 bg-gray-900 border-r border-blue-700 shadow-2xl flex flex-col items-center py-8 px-4 rounded-r-2xl transition-transform duration-300
+        ${
+          open ? "translate-x-0" : "-translate-x-full"
+        } sm:static sm:translate-x-0`}
+      style={{ maxWidth: "100vw" }}
+    >
+      {/* Close button for mobile */}
+      <button
+        className="absolute top-4 right-4 sm:hidden text-blue-400 bg-gray-800 p-3 rounded-full z-50"
+        style={{ minWidth: "44px", minHeight: "44px" }}
+        onClick={() => {
+          if (onClose) onClose();
+        }}
+        aria-label="Close sidebar"
+      >
+        <HiX className="text-2xl" />
+      </button>
       {/* App Title */}
       <div className="text-3xl font-extrabold tracking-tight mb-6 bg-gradient-to-r from-blue-400 via-blue-300 to-blue-600 bg-clip-text text-transparent drop-shadow">
         Task Management
