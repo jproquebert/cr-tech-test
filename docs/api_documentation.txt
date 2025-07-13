@@ -1,0 +1,75 @@
+API Endpoints Documentation
+==========================
+
+All endpoints require a Bearer token in the Authorization header.
+
+---
+
+GET /api/tasks
+  - Description: Get all tasks, optionally filter by status and/or search text.
+  - Query Parameters:
+      - status (optional, comma-separated): Filter by one or more statuses (e.g., "pending,inprogress")
+      - searchText (optional, string): Search term for task title or assigned user
+  - Response:
+      - 200 OK: JSON array of TaskItem objects
+
+GET /api/tasks/{id}
+  - Description: Get a task by ID
+  - Path Parameters:
+      - id (GUID): The unique identifier of the task
+  - Response:
+      - 200 OK: JSON TaskItem object
+      - 404 Not Found: Task not found
+
+POST /api/tasks
+  - Description: Create a new task
+  - Body (JSON):
+      {
+        "Title": "string",
+        "Description": "string",
+        "DueDate": "yyyy-MM-ddTHH:mm:ssZ",
+        "Status": "string",
+        "CreatedBy": "string",
+        "AssignedTo": "string"
+      }
+  - Response:
+      - 201 Created: JSON TaskItem object
+
+PUT /api/tasks/{id}
+  - Description: Update a task
+  - Path Parameters:
+      - id (GUID): The unique identifier of the task
+  - Body (JSON):
+      {
+        "Title": "string",
+        "Description": "string",
+        "DueDate": "yyyy-MM-ddTHH:mm:ssZ",
+        "Status": "string",
+        "AssignedTo": "string"
+      }
+  - Response:
+      - 200 OK: JSON TaskItem object
+      - 400 Bad Request: Invalid task or mismatched ID
+      - 404 Not Found: Task not found
+
+DELETE /api/tasks/{id}
+  - Description: Delete a task
+  - Path Parameters:
+      - id (GUID): The unique identifier of the task
+  - Response:
+      - 200 OK: Task successfully deleted (response body: { "success": true })
+      - 404 Not Found: Task not found (response body: { "success": false })
+
+---
+
+TaskItem Model Example:
+{
+  "Id": "guid",
+  "Title": "string",
+  "Description": "string",
+  "DueDate": "yyyy-MM-ddTHH:mm:ssZ",
+  "Status": "string",
+  "CreatedBy": "string",
+  "AssignedTo": "string",
+  "CreatedAt": "yyyy-MM-ddTHH:mm:ssZ"
+}

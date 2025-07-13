@@ -1,0 +1,132 @@
+{
+	"info": {
+		"_postman_id": "3c19b667-c42e-495d-a40f-ae78ad575821",
+		"name": "Task Manager",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "37949164"
+	},
+	"item": [
+		{
+			"name": "Create new Task",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"Test Task 5\",\n    \"description\": \"This is a sample task created via API.\",\n    \"dueDate\": \"2025-07-31T23:59:59Z\",\n    \"status\": \"Pending\",\n    \"createdBy\": \"user@example.com\",\n    \"assignedTo\": \"assignee@example.com\",\n    \"createdAt\": \"2025-07-08T18:00:00Z\"\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:7011/api/tasks"
+			},
+			"response": []
+		},
+		{
+			"name": "Get all tasks",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:7011/api/tasks?searchText=jean&status=pending",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7011",
+					"path": [
+						"api",
+						"tasks"
+					],
+					"query": [
+						{
+							"key": "searchText",
+							"value": "jean"
+						},
+						{
+							"key": "status",
+							"value": "pending"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get task by id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:7011/api/tasks/51717741-00d5-4244-80db-52cf1880d0ce"
+			},
+			"response": []
+		},
+		{
+			"name": "Update task",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"Test Task 7777\",\n    \"description\": \"This is a sample task created via API.\",\n    \"dueDate\": \"2025-07-31T23:59:59Z\",\n    \"status\": \"Pending\",\n    \"assignedTo\": \"assignee@example.com\"\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:7011/api/tasks/6ae463fc-cac8-4fa8-9b18-b7d368b1bf78"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete task",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "http://localhost:7011/api/tasks/51717741-00d5-4244-80db-52cf1880d0ce"
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": {
+			"token": ""
+		}
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
