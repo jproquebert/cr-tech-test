@@ -240,20 +240,15 @@ Import the Postman collection from `docs/Task Manager.postman_collection.json`
 ## 🔧 Testing
 
 ### Backend Tests
+### Recommended: run from visual studio. Pushing to github also runs the unit tests automatically.
 ```bash
 cd tests/TaskManagerAPI.Tests
 dotnet test
 ```
 
-### Frontend Tests
-```bash
-cd client
-npm run test  # (if tests were implemented)
-```
-
 ## 🚀 Deployment
 
-### Azure Deployment
+### Azure Deployment (pending)
 1. **Azure Functions**: Deploy using Azure Functions extension for VS Code or Azure CLI
 2. **React App**: Deploy to Azure Static Web Apps or Azure App Service
 3. **Database**: Use Azure SQL Database for production
@@ -274,7 +269,7 @@ Given more time, and if I were to scale this project, I would implement the foll
    - Input validation and sanitization
    - Rate limiting
    - Audit logging for all operations
-   - Improve loading states in UI
+   - Improve UI
 
 2. **Performance Optimizations**:
    - Database query optimization
@@ -283,7 +278,7 @@ Given more time, and if I were to scale this project, I would implement the foll
    - Bundle splitting and lazy loading
 
 3. **Testing Coverage**:
-   - Comprehensive unit tests (frontend & backend)
+   - Comprehensive unit tests (frontend)
    - Integration tests
    - End-to-end testing
    - Performance testing
