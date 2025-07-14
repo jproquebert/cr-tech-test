@@ -13,7 +13,7 @@ interface EditTaskModalProps {
 export function EditTaskModal({ open, id, task, onClose, onTaskUpdated }: EditTaskModalProps) {
   const { editTask } = useTaskManagerEndpoints();
   const [form, setForm] = useState<Task | null>(task);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
