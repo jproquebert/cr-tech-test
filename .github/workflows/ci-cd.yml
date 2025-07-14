@@ -70,19 +70,19 @@ jobs:
         
     - name: Restore dependencies
       working-directory: ./api/TaskManagerAPI
-      run: dotnet restore
+      run: dotnet restore TaskManagerAPI.Solution.sln
       
     - name: Build application
       working-directory: ./api/TaskManagerAPI
-      run: dotnet build --no-restore --configuration Release
+      run: dotnet build TaskManagerAPI.Solution.sln --no-restore --configuration Release
       
     - name: Run unit tests
-      working-directory: ./tests/TaskManagerAPI.Tests
-      run: dotnet test --no-build --verbosity normal --configuration Release
+      working-directory: ./api/TaskManagerAPI
+      run: dotnet test TaskManagerAPI.Solution.sln --no-build --verbosity normal --configuration Release
       
     - name: Publish application
       working-directory: ./api/TaskManagerAPI
-      run: dotnet publish --no-build --configuration Release --output ./publish
+      run: dotnet publish TaskManagerAPI.csproj --no-build --configuration Release --output ./publish
       
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4

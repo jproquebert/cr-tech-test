@@ -66,11 +66,15 @@ CREATE INDEX IX_Tasks_AssignedTo ON Tasks (AssignedTo);
 2. Create a new database named `taskmanagementdb`
 3. Run the same schema script above
 
-
 #### Option C: Use my Azure DB (Recommended)
-1. Paste the local.settings.json I provided into the visual studio project in the /api/TaskManagerAPI folder
+1. Paste the local.settings.json I provided into the Visual Studio project in the `/api/TaskManagerAPI` folder
 
 ### 2. Azure Functions API Setup
+
+**Prerequisites:**
+- Visual Studio 2022 with Azure development workload
+- .NET 8.0 SDK
+- Azure Functions Core Tools v4 (optional, for command line)
 
 Navigate to the API directory:
 ```bash
@@ -102,11 +106,19 @@ Update `local.settings.json` with your configuration:
 ```
 
 Start the Azure Functions:
+
+**Option A: Using Visual Studio (Recommended)**
+1. Open the solution file `TaskManagerAPI.Solution.sln` in Visual Studio
+2. Set `TaskManagerAPI` as the startup project
+3. Press F5 or click the "Run" button to start debugging
+
+**Option B: Command Line (Alternative)**
 ```bash
 func start
 ```
+*Note: If `func start` doesn't work due to multiple project detection, use Visual Studio instead.*
 
-The API will be available at `http://localhost:7011`
+The API will be available at `http://localhost:7011` (Visual Studio) or `http://localhost:7011` (func start)
 
 ### 3. React Frontend Setup
 
@@ -123,7 +135,7 @@ npm install
 Configure environment variables:
 ```bash
 # Copy the environment template
-cp .env.example .env.local
+cp .env.example .env
 ```
 
 Edit `.env.local` with your Azure AD values:
@@ -181,7 +193,7 @@ Import the Postman collection from `docs/Task Manager.postman_collection.json`
 
 **Setup Variables in Postman**:
 - Add your Bearer token to the Authorization tab in the collection root within postman
-- `base_url`: `http://localhost:7011` (for local development)
+- `base_url`: `http://localhost:7011` 
 
 ### API Endpoints
 
@@ -228,20 +240,15 @@ Import the Postman collection from `docs/Task Manager.postman_collection.json`
 ## 🔧 Testing
 
 ### Backend Tests
+### Recommended: run from visual studio. Pushing to github also runs the unit tests automatically.
 ```bash
 cd tests/TaskManagerAPI.Tests
 dotnet test
 ```
 
-### Frontend Tests
-```bash
-cd client
-npm run test  # (if tests were implemented)
-```
-
 ## 🚀 Deployment
 
-### Azure Deployment
+### Azure Deployment (pending)
 1. **Azure Functions**: Deploy using Azure Functions extension for VS Code or Azure CLI
 2. **React App**: Deploy to Azure Static Web Apps or Azure App Service
 3. **Database**: Use Azure SQL Database for production
@@ -262,7 +269,7 @@ Given more time, and if I were to scale this project, I would implement the foll
    - Input validation and sanitization
    - Rate limiting
    - Audit logging for all operations
-   - Improve loading states in UI
+   - Improve UI
 
 2. **Performance Optimizations**:
    - Database query optimization
@@ -271,7 +278,7 @@ Given more time, and if I were to scale this project, I would implement the foll
    - Bundle splitting and lazy loading
 
 3. **Testing Coverage**:
-   - Comprehensive unit tests (frontend & backend)
+   - Comprehensive unit tests (frontend)
    - Integration tests
    - End-to-end testing
    - Performance testing
@@ -311,3 +318,4 @@ Given more time, and if I were to scale this project, I would implement the foll
 ## 🐛 Known Issues
 - Limited error handling in some edge cases
 - Little input validation on client side for some fields
+- `func start` command line tool may have issues detecting the correct project due to multiple .csproj files in the solution - use Visual Studio directly instead
