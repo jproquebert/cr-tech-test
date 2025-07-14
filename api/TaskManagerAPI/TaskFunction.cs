@@ -183,7 +183,9 @@ public class TaskFunction
         if (!result)
             return req.CreateResponse(HttpStatusCode.NotFound);
 
-        var response = req.CreateResponse(HttpStatusCode.NoContent);
+        // Return 200 OK with success response to match what frontend expects
+        var response = req.CreateResponse(HttpStatusCode.OK);
+        await response.WriteAsJsonAsync(new { success = true });
         return response;
     }
 

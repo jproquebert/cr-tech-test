@@ -2,9 +2,13 @@ import { useSelector } from "react-redux";
 import type { CreateTaskDto, EditTaskDto } from "../types/taskTypes";
 
 export function useTaskManagerEndpoints() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const token = useSelector((state: any) => state.user.token);
 
-  const getTasks = async (statuses?: string[] | null, searchText?: string | null) => {
+  const getTasks = async (
+    statuses?: string[] | null,
+    searchText?: string | null
+  ) => {
     let url = "http://localhost:7011/api/tasks";
     const params: string[] = [];
     if (statuses && statuses.length > 0) {
@@ -69,7 +73,13 @@ export function useTaskManagerEndpoints() {
       },
     });
     if (!res.ok) throw new Error("Failed to delete task");
-    return res.json();
+
+    // Only try to parse JSON if there's content
+    const contentType = res.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      return res.json();
+    }
+    return { success: true }; // Default success response
   };
 
   return { getTasks, createTask, editTask, deleteTask };

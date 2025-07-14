@@ -22,6 +22,7 @@ const statusOptions = [
 ];
 
 function App() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const email = useSelector((state: any) => state.user.email);
   const dispatch = useDispatch();
   const { instance, accounts } = useMsal();
@@ -95,7 +96,7 @@ function App() {
       setDeleteTask(null);
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
     } catch (err) {
-      setDeleteError("Failed to delete task.");
+      setDeleteError("Failed to delete task. " + err);
     } finally {
       setDeleteLoading(false);
     }

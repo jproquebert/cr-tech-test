@@ -7,10 +7,14 @@ import { setUser } from "../store/userSlice";
 export function LoginButton() {
   const { instance } = useMsal();
   const dispatch = useDispatch();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const email = useSelector((state: any) => state.user.email);
 
   const login = async () => {
-    const result = await instance.loginPopup({ ...loginRequest, prompt: "select_account" });
+    const result = await instance.loginPopup({
+      ...loginRequest,
+      prompt: "select_account",
+    });
     const { accessToken, account } = result;
     const user = {
       email: account.username,

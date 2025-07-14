@@ -38,7 +38,7 @@ A full-stack task management application built with React, Azure Functions, and 
 
 ### 1. Database Setup
 
-#### Option A: Azure SQL Database (Recommended)
+#### Option A: Azure SQL Database
 1. Create an Azure SQL Database
 2. Connect using SQL Server Management Studio or Azure Data Studio
 3. Run the schema creation script:
@@ -65,6 +65,10 @@ CREATE INDEX IX_Tasks_AssignedTo ON Tasks (AssignedTo);
 1. Install SQL Server LocalDB or SQL Server Express
 2. Create a new database named `taskmanagementdb`
 3. Run the same schema script above
+
+
+#### Option C: Use my Azure DB (Recommended)
+1. Paste the local.settings.json I provided into the visual studio project in the /api/TaskManagerAPI folder
 
 ### 2. Azure Functions API Setup
 
@@ -116,15 +120,18 @@ Install dependencies:
 npm install
 ```
 
-Configure authentication by updating `src/authConfig.ts`:
-```typescript
-export const msalConfig = {
-  auth: {
-    clientId: "YOUR_AZURE_CLIENT_ID",
-    authority: "https://login.microsoftonline.com/YOUR_TENANT_ID",
-    redirectUri: "http://localhost:5173"
-  }
-};
+Configure environment variables:
+```bash
+# Copy the environment template
+cp .env.example .env.local
+```
+
+Edit `.env.local` with your Azure AD values:
+```env
+VITE_AZURE_CLIENT_ID=your_azure_client_id_here
+VITE_AZURE_AUTHORITY=https://login.microsoftonline.com/common
+VITE_AZURE_REDIRECT_URI=http://localhost:5173
+VITE_AZURE_SCOPES=api://your_azure_client_id_here/user_impersonation
 ```
 
 Start the development server:
@@ -134,9 +141,12 @@ npm run dev
 
 The frontend will be available at `http://localhost:5173`
 
-## 🔐 Authentication Setup
+## 4. 🔐 Authentication Setup 
 
+### Use local.set
 ### Azure AD Configuration
+
+### (Recommended: use local.settings.json I provided)
 
 1. **Register Application in Azure AD**:
    - Go to Azure Portal → Azure Active Directory → App registrations
