@@ -155,10 +155,9 @@ The frontend will be available at `http://localhost:5173`
 
 ## 4. 🔐 Authentication Setup 
 
-### Use local.set
 ### Azure AD Configuration
 
-### (Recommended: use local.settings.json I provided)
+### (Recommended: use local.settings.json I provided). To create your own application in azure AD, follow the instructions below:
 
 1. **Register Application in Azure AD**:
    - Go to Azure Portal → Azure Active Directory → App registrations
