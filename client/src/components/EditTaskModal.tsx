@@ -10,7 +10,13 @@ interface EditTaskModalProps {
   onTaskUpdated?: (task: Task) => void;
 }
 
-export function EditTaskModal({ open, id, task, onClose, onTaskUpdated }: EditTaskModalProps) {
+export function EditTaskModal({
+  open,
+  id,
+  task,
+  onClose,
+  onTaskUpdated,
+}: EditTaskModalProps) {
   const { editTask } = useTaskManagerEndpoints();
   const [form, setForm] = useState<Task | null>(task);
   const [loading, setLoading] = useState<boolean>(false);
@@ -22,7 +28,8 @@ export function EditTaskModal({ open, id, task, onClose, onTaskUpdated }: EditTa
   const validateFields = () => {
     const errors: Record<string, string> = {};
     if (!form.Title.trim()) errors.Title = "This field is required";
-    if (!form.Description?.trim()) errors.Description = "This field is required";
+    if (!form.Description?.trim())
+      errors.Description = "This field is required";
     if (!form.DueDate?.trim()) errors.DueDate = "This field is required";
     if (!form.Status.trim()) errors.Status = "This field is required";
     if (!form.AssignedTo.trim()) errors.AssignedTo = "This field is required";
@@ -30,7 +37,9 @@ export function EditTaskModal({ open, id, task, onClose, onTaskUpdated }: EditTa
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     setForm({ ...form, [e.target.name]: e.target.value } as Task);
     setFieldErrors({ ...fieldErrors, [e.target.name]: "" });
@@ -59,7 +68,7 @@ export function EditTaskModal({ open, id, task, onClose, onTaskUpdated }: EditTa
       if (onTaskUpdated) onTaskUpdated(updatedTask);
       onClose();
     } catch (err) {
-      setError("Failed to update task.");
+      setError("Failed to update task. " + err);
     } finally {
       setLoading(false);
     }
@@ -67,7 +76,10 @@ export function EditTaskModal({ open, id, task, onClose, onTaskUpdated }: EditTa
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-2">
-      <div className="bg-gray-900 rounded-xl shadow-2xl p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
+      <div
+        className="bg-gray-900 rounded-xl shadow-2xl p-6 w-full max-w-md"
+        onClick={(e) => e.stopPropagation()}
+      >
         <h2 className="text-xl font-bold mb-4 text-blue-400">Edit Task</h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <label className="text-sm font-semibold text-gray-300">Title</label>
@@ -83,7 +95,9 @@ export function EditTaskModal({ open, id, task, onClose, onTaskUpdated }: EditTa
           {fieldErrors.Title && (
             <span className="text-red-400 text-xs">{fieldErrors.Title}</span>
           )}
-          <label className="text-sm font-semibold text-gray-300">Description</label>
+          <label className="text-sm font-semibold text-gray-300">
+            Description
+          </label>
           <textarea
             name="Description"
             required
@@ -93,9 +107,13 @@ export function EditTaskModal({ open, id, task, onClose, onTaskUpdated }: EditTa
             onChange={handleChange}
           />
           {fieldErrors.Description && (
-            <span className="text-red-400 text-xs">{fieldErrors.Description}</span>
+            <span className="text-red-400 text-xs">
+              {fieldErrors.Description}
+            </span>
           )}
-          <label className="text-sm font-semibold text-gray-300">Due Date</label>
+          <label className="text-sm font-semibold text-gray-300">
+            Due Date
+          </label>
           <input
             name="DueDate"
             type="date"
@@ -123,7 +141,9 @@ export function EditTaskModal({ open, id, task, onClose, onTaskUpdated }: EditTa
           {fieldErrors.Status && (
             <span className="text-red-400 text-xs">{fieldErrors.Status}</span>
           )}
-          <label className="text-sm font-semibold text-gray-300">Assigned To</label>
+          <label className="text-sm font-semibold text-gray-300">
+            Assigned To
+          </label>
           <input
             name="AssignedTo"
             type="text"
@@ -134,7 +154,9 @@ export function EditTaskModal({ open, id, task, onClose, onTaskUpdated }: EditTa
             onChange={handleChange}
           />
           {fieldErrors.AssignedTo && (
-            <span className="text-red-400 text-xs">{fieldErrors.AssignedTo}</span>
+            <span className="text-red-400 text-xs">
+              {fieldErrors.AssignedTo}
+            </span>
           )}
           {error && <div className="text-red-400 text-sm">{error}</div>}
           <div className="flex gap-2 justify-end">
@@ -153,8 +175,20 @@ export function EditTaskModal({ open, id, task, onClose, onTaskUpdated }: EditTa
             >
               {loading && (
                 <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                    fill="none"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
                 </svg>
               )}
               {loading ? "Updating..." : "Save Changes"}

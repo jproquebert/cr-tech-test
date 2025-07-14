@@ -15,6 +15,7 @@ export function AddTaskModal({
   onTaskCreated,
 }: AddTaskModalProps) {
   const { createTask } = useTaskManagerEndpoints();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const email = useSelector((state: any) => state.user.email);
   const [form, setForm] = useState({
     Title: "",
@@ -48,8 +49,6 @@ export function AddTaskModal({
     setForm({ ...form, [e.target.name]: e.target.value });
     setFieldErrors({ ...fieldErrors, [e.target.name]: "" });
   };
-
-  const isFormValid = Object.keys(validateFields()).length === 0;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

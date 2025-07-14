@@ -16,7 +16,7 @@ export function SearchComponents({
   onStatusChange,
 }: SearchComponentsProps) {
   const [searchText, setSearchText] = useState("");
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Debounce search input
   useEffect(() => {
